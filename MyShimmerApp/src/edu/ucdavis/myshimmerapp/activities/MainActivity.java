@@ -543,18 +543,18 @@ public class MainActivity extends MyServiceActivity {
 			// Log.d(TAG, "sd gyro: " + sdXGyro + ";" + sdYGyro + ";" +
 			// sdZGyro);
 
-//			prepDataAvg[0] = meanXAccl;
-//			prepDataAvg[1] = meanYAccl;
-//			prepDataAvg[2] = meanZAccl;
-//			prepDataAvg[3] = meanXGyro;
-//			prepDataAvg[4] = meanYGyro;
-//			prepDataAvg[5] = meanZGyro;
-//			prepDataAvg[6] = sdXAccl;
-//			prepDataAvg[7] = sdYAccl;
-//			prepDataAvg[8] = sdZAccl;
-//			prepDataAvg[9] = sdXGyro;
-//			prepDataAvg[10] = sdYGyro;
-//			prepDataAvg[11] = sdZGyro;
+			// prepDataAvg[0] = meanXAccl;
+			// prepDataAvg[1] = meanYAccl;
+			// prepDataAvg[2] = meanZAccl;
+			// prepDataAvg[3] = meanXGyro;
+			// prepDataAvg[4] = meanYGyro;
+			// prepDataAvg[5] = meanZGyro;
+			// prepDataAvg[6] = sdXAccl;
+			// prepDataAvg[7] = sdYAccl;
+			// prepDataAvg[8] = sdZAccl;
+			// prepDataAvg[9] = sdXGyro;
+			// prepDataAvg[10] = sdYGyro;
+			// prepDataAvg[11] = sdZGyro;
 		}
 		mPrepData.clear();
 	}

@@ -80,6 +80,7 @@ public class RecogIntermittentActivity extends RecogActivity {
 											"******** Start Recording ********");
 									mIsRecording = true;
 									mRecordData = addRecordData(convertShimmerDataList(mWrapWindowData));
+									mEndingPoint = mRecordData.size();
 								}
 
 								mWrapWindowData.clear();
@@ -122,10 +123,14 @@ public class RecogIntermittentActivity extends RecogActivity {
 								/*
 								 * end with one extra previous window.
 								 */
-								MyShimmerDataList toMatchData = MyShimmerDataList
-										.subList(mRecordData, 0, mEndingPoint
-												+ mWindowSize);
-								logWindow(toMatchData);
+								if (mRecordData.size() > 8 * mWindowSize
+										&& mRecordData.size() < 20 * mWindowSize) {
+									MyShimmerDataList toMatchData = MyShimmerDataList
+											.subList(mRecordData, 0,
+													mEndingPoint + mWindowSize);
+									logWindow(toMatchData);
+									calcFeatures(toMatchData);
+								}
 
 								// TODO: calculate features and matching trained
 								// models.

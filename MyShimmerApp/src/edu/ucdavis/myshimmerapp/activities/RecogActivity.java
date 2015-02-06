@@ -21,6 +21,8 @@ import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.XYPlot;
 import com.example.myshimmerapp.R;
 
+import edu.ucdavis.myshimmerapp.ml.Features;
+import edu.ucdavis.myshimmerapp.ml.Features.FeatureClass;
 import pl.flex_it.androidplot.XYSeriesShimmer;
 
 public abstract class RecogActivity extends MyServiceActivity {
@@ -332,5 +334,15 @@ public abstract class RecogActivity extends MyServiceActivity {
 
 		return tmpData;
 
+	}
+
+	protected static void calcFeatures(MyShimmerDataList input) {
+
+		if (input != null && !input.isEmpty()) {
+			Log.d(TAG, "calcFeatures");
+			FeatureClass feature = new Features(input).getFeatures();
+			Log.d(TAG, feature.toString());
+
+		}
 	}
 }

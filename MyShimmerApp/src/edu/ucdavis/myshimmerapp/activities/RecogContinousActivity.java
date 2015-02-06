@@ -71,6 +71,7 @@ public class RecogContinousActivity extends RecogActivity {
 								 */
 								mRecordData.addAll(mWindowDataBak);
 								mRecordData.addAll(mWindowData);
+								mEndingPoint = mRecordData.size();
 							} else {
 								mWindowDataBak.clear();
 								mWindowDataBak.addAll(mWindowData);
@@ -101,10 +102,14 @@ public class RecogContinousActivity extends RecogActivity {
 								/*
 								 * end with one extra previous window.
 								 */
-								MyShimmerDataList toMatchData = MyShimmerDataList
-										.subList(mRecordData, 0, mEndingPoint
-												+ mWindowSize);
-								logWindow(toMatchData);
+								if (mRecordData.size() > 8 * mWindowSize
+										&& mRecordData.size() < 20 * mWindowSize) {
+									MyShimmerDataList toMatchData = MyShimmerDataList
+											.subList(mRecordData, 0,
+													mEndingPoint + mWindowSize);
+									logWindow(toMatchData);
+									calcFeatures(toMatchData);
+								}
 
 								// TODO: calculate features and matching trained
 								// models.
