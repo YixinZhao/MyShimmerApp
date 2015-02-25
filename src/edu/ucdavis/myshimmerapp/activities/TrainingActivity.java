@@ -1,5 +1,6 @@
 package edu.ucdavis.myshimmerapp.activities;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -7,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myshimmerapp.R;
 import com.shimmerresearch.android.Shimmer;
@@ -16,24 +19,27 @@ import edu.ucdavis.myshimmerapp.ml.GestureNames;
 import edu.ucdavis.myshimmerapp.ml.Model;
 import edu.ucdavis.myshimmerapp.services.MyShimmerService;
 
-public class RecogContinousActivity extends RecogTrainActivityBase {
-	private final static String TAG = "MyShimmerApp.RecogContinousActivity";
+public class TrainingActivity extends RecogTrainActivityBase {
+
+	private static final String TAG = "MyShimmerApp.TrainingActivity";
 
 	private static Button startButton;
+	private Button buildButton;
+	private static TextView gestureText;
+
 	private static boolean isListening = false;
+	private static int count = 0;
+	private final static int countMax = 10;
+	private static int gest_count = 0;
 
 	private static MyShimmerDataList mWindowData = new MyShimmerDataList();
 	private static MyShimmerDataList mWindowDataBak = new MyShimmerDataList();
 
 	public void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.main_recog);
+		setContentView(R.layout.main_train);
 		super.onCreate(savedInstanceState);
 
-		model = new Model(mlAlgo, gestureType, false);
-		if (!model.isInitializedforValidation()) {
-			Log.d(TAG, "No Model File Exist! Exit Matching!");
-			finish();
-		}
+		model = new Model(mlAlgo, gestureType, true);
 
 		startButton = (Button) findViewById(R.id.button_start);
 		startButton.setOnClickListener(new OnClickListener() {
@@ -49,6 +55,26 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 
 		});
 
+		buildButton = (Button) findViewById(R.id.button_build);
+		buildButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (isListening == false) {
+					// BuildThread bt = new BuildThread();
+					// bt.run();
+					buildButton.setEnabled(false);
+					new BuildThread().execute();
+					// model.buildClassfiers();
+				}
+			}
+
+		});
+
+		gestureText = (TextView) findViewById(R.id.gesture_name);
+		gestureText.setText(GestureNames.types[gestureType][gest_count] + ":"
+				+ String.valueOf(count + 1));
+		gest_count = 0;
 	}
 
 	protected static Handler mActivityHandler = new Handler() {
@@ -94,7 +120,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 
 						if (++mWindowCounter >= mWindowSize) {
 							boolean isDetected = isWindowPositiveForSignal(mWindowData);
-//							Log.d(TAG, "isDetected:" + isDetected);
+							// Log.d(TAG, "isDetected:" + isDetected);
 
 							if (mIsRecording == false) {
 								if (isDetected) {
@@ -118,33 +144,44 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 							} else {
 								mRecordData.addAll(mWindowData);
 
-								if (mRecordData.size() > maxRecordWindowSize) {
+								if (mRecordData.size() >= maxRecordWindowSize) {
 									mIsRecording = false;
 									mEndingWindowCounter = 0;
-									startButton.setEnabled(true);
+									mEndingPoint = 0;
 									isListening = false;
+									startButton.setEnabled(true);
 
 									Log.d(TAG,
 											"******** End Recording Max Time Reached ********");
-//									Log.d(TAG, "mRecordData.size():"
-//											+ mRecordData.size());
+									// Log.d(TAG, "mRecordData.size():"
+									// + mRecordData.size());
 
 									MyShimmerDataList toMatchData = mRecordData;
+
 									logWindow(toMatchData);
 
-									/**
-									 * calculate features, matching trained
-									 * models, and display result.
-									 **/
-									int type = model.classify(calcFeatures(
-											toMatchData, false));
-									if (type >= 0
-											&& type < GestureNames.types[gestureType].length) {
-										resultText
-												.setText(GestureNames.types[gestureType][type]);
+									/*
+									 * add instance for training, display
+									 * gesture name
+									 */
+									model.addInstanceForTraining(
+											calcFeatures(toMatchData, true),
+											GestureNames.types[gestureType][gest_count]);
+
+									if (++count >= countMax) {
+										if (++gest_count == GestureNames.types[gestureType].length) {
+											gest_count = 0;
+											gestureText.setText("Done!");
+										}
+										count = 0;
 									}
+									gestureText
+											.setText(GestureNames.types[gestureType][gest_count]
+													+ ":"
+													+ String.valueOf(count + 1));
 								}
 								// } else {
+								//
 								// if (!isDetected) {
 								// mEndingWindowCounter++;
 								// } else {
@@ -168,19 +205,22 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 								//
 								// mIsRecording = false;
 								// mEndingWindowCounter = 0;
-								// startButton.setEnabled(true);
 								// isListening = false;
-								//
-								// Log.d(TAG,
-								// "******** End Recording ********");
+								// startButton.setEnabled(true);
 								//
 								// Log.d(TAG, "mRecordData.size():"
-								// + mRecordData.size());
-								// /*
-								// * end with one extra following window.
-								// */
+								// + mRecordData.size()
+								// + ",mEndingPoint"
+								// + mEndingPoint);
+								//
 								// if (mRecordData.size() >=
 								// minRecordWindowSize) {
+								// /*
+								// * end with one extra following
+								// * window.
+								// */
+								// Log.d(TAG,
+								// "******** End Recording ********");
 								// MyShimmerDataList toMatchData =
 								// MyShimmerDataList
 								// .subList(
@@ -188,22 +228,32 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 								// 0,
 								// mEndingPoint
 								// + mWindowSize);
+								//
 								// logWindow(toMatchData);
 								//
-								// /**
-								// * calculate features, matching
-								// * trained models, and display
-								// * result.
-								// **/
-								// int type = model
-								// .classify(calcFeatures(
-								// toMatchData, false));
-								// if (type >= 0
-								// && type <
+								// /*
+								// * add instance for training,
+								// * display gesture name
+								// */
+								// model.addInstanceForTraining(
+								// calcFeatures(toMatchData,
+								// true),
+								// GestureNames.types[gestureType][gest_count]);
+								//
+								// if (++count >= countMax) {
+								// if (++gest_count ==
 								// GestureNames.types[gestureType].length) {
-								// resultText
-								// .setText(GestureNames.types[gestureType][type]);
+								// gest_count = 0;
+								// gestureText
+								// .setText("Done!");
 								// }
+								// count = 0;
+								// }
+								// gestureText
+								// .setText(GestureNames.types[gestureType][gest_count]
+								// + ":"
+								// + String.valueOf(count + 1));
+								//
 								// }
 								// }
 								// }
@@ -211,7 +261,6 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 							mWindowData.clear();
 							mWindowCounter = 0;
 						}
-
 					}
 				}
 				break;
@@ -241,6 +290,8 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 			mService.deRegisterGraphHandler(mActivityHandler);
 
 		isListening = false;
+		count = 0;
+		gest_count = 0;
 	}
 
 	public void onPause() {
@@ -256,6 +307,8 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 			mService.deRegisterGraphHandler(mActivityHandler);
 
 		isListening = false;
+		count = 0;
+		gest_count = 0;
 	}
 
 	public void onResume() {
@@ -270,8 +323,34 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 		if (mService != null)
 			mService.registerGraphHandler(mActivityHandler);
 
-		startButton.setEnabled(true);
 		isListening = false;
+		count = 0;
+		gest_count = 0;
+
+		startButton.setEnabled(true);
+		buildButton.setEnabled(true);
 	}
 
+	private class BuildThread extends AsyncTask<Void, Void, Boolean> {
+
+		@Override
+		protected Boolean doInBackground(Void... params) {
+			return model.buildClassfiers();
+		}
+
+		protected void onPostExecute(Boolean b) {
+			try {
+				if (b) {
+					Toast.makeText(getApplicationContext(), "Build Done..",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getApplicationContext(), "Build Failed..",
+							Toast.LENGTH_SHORT).show();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			buildButton.setEnabled(true);
+		}
+	}
 }

@@ -43,10 +43,16 @@
             android:theme="@style/AppTheme" >
         </activity>
         <activity
+            android:name="edu.ucdavis.myshimmerapp.activities.TrainingActivity"
+            android:label="@string/training_title"
+            android:theme="@style/AppTheme" >
+        </activity>
+        <activity
             android:name="edu.ucdavis.myshimmerapp.activities.SettingsActivity"
             android:label="@string/settings_title"
             android:theme="@style/AppTheme" >
         </activity>
+
         <service
             android:name="edu.ucdavis.myshimmerapp.services.MyShimmerService"
             android:enabled="true" />

@@ -1,13 +1,10 @@
 package edu.ucdavis.myshimmerapp.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 import com.shimmerresearch.android.Shimmer;
-import com.shimmerresearch.driver.FormatCluster;
 import com.shimmerresearch.driver.ObjectCluster;
 
-import edu.ucdavis.myshimmerapp.activities.MyShimmerDataList;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;

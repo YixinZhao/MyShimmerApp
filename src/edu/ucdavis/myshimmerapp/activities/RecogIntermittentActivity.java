@@ -3,26 +3,61 @@ package edu.ucdavis.myshimmerapp.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
+import com.example.myshimmerapp.R;
 import com.shimmerresearch.android.Shimmer;
 import com.shimmerresearch.driver.ObjectCluster;
 
+import edu.ucdavis.myshimmerapp.ml.GestureNames;
+import edu.ucdavis.myshimmerapp.ml.Model;
 import edu.ucdavis.myshimmerapp.services.MyShimmerService;
 
-public class RecogIntermittentActivity extends RecogActivity {
+public class RecogIntermittentActivity extends RecogTrainActivityBase {
 
 	private static final String TAG = "MyShimmerApp.RecogIntermittentActivity";
 
 	public final static String Extra_Window_Sizes = "Extra_WindowSizes";
+
+	private static Button startButton;
+	private static boolean isListening = false;
 
 	private static int mWrapWindowCounter = 0;
 	private final static int mWrapWindowMax = 4;
 
 	private static List<ObjectCluster> mWindowData = new ArrayList<ObjectCluster>();
 	private static List<ObjectCluster> mWrapWindowData = new ArrayList<ObjectCluster>();
+
+	public void onCreate(Bundle savedInstanceState) {
+		setContentView(R.layout.main_recog);
+		super.onCreate(savedInstanceState);
+
+		model = new Model(mlAlgo, gestureType, false);
+		if (!model.isInitializedforValidation()) {
+			Log.d(TAG, "No Model File Exist! Exit Matching!");
+			finish();
+		}
+
+		startButton = (Button) findViewById(R.id.button_start);
+		startButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (!isListening) {
+
+					startButton.setEnabled(false);
+					isListening = true;
+				}
+			}
+
+		});
+	}
 
 	public static Handler mActivityHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -41,104 +76,149 @@ public class RecogIntermittentActivity extends RecogActivity {
 				break;
 
 			case MyShimmerService.Message_ShimmerRead:
-				if (msg.obj instanceof ObjectCluster) {
-					ObjectCluster data = (ObjectCluster) msg.obj;
+				if (isListening) {
+					if (msg.obj instanceof ObjectCluster) {
+						ObjectCluster data = (ObjectCluster) msg.obj;
 
-					// test begin
-					{
-						double[] datatmp = MyShimmerDataList
-								.parseShimmerObject(data);
-						log(datatmp);
-						if (mIsRecording) {
-							drawGraph(dynamicPlot_accl_realtime,
-									mPlotAcclDataMap, mPlotAcclSeriesMap,
-									SENSOR_TYPE_ACCL, datatmp);
-							drawGraph(dynamicPlot_gyro_realtime,
-									mPlotGyroDataMap, mPlotGyroSeriesMap,
-									SENSOR_TYPE_GYRO, datatmp);
+						// test begin
+						{
+							double[] datatmp = MyShimmerDataList
+									.parseShimmerObject(data);
+							log(datatmp);
+							if (mIsRecording) {
+								drawGraph(dynamicPlot_accl_realtime,
+										mPlotAcclDataMap, mPlotAcclSeriesMap,
+										SENSOR_TYPE_ACCL, datatmp);
+								drawGraph(dynamicPlot_gyro_realtime,
+										mPlotGyroDataMap, mPlotGyroSeriesMap,
+										SENSOR_TYPE_GYRO, datatmp);
+							}
 						}
-					}
-					// test end
+						// test end
 
-					mWindowData.add(data);
+						mWindowData.add(data);
 
-					if (++mWindowCounter >= mWindowSize) {
-						boolean isDetected = false;
-						if (mIsRecording == false) {
-							mWrapWindowData.addAll(mWindowData);
+						if (++mWindowCounter >= mWindowSize) {
+							boolean isDetected = false;
+							if (mIsRecording == false) {
+								mWrapWindowData.addAll(mWindowData);
 
-							/* intermittently inspect while not recording */
-							if (++mWrapWindowCounter >= mWrapWindowMax) {
+								/* intermittently inspect while not recording */
+								if (++mWrapWindowCounter >= mWrapWindowMax) {
+
+									isDetected = isWindowPositiveForSignal(convertShimmerDataList(mWindowData));
+									Log.d(TAG, "isDetected:" + isDetected);
+
+									if (isDetected) {
+										mRecordData.clear();
+
+										Log.d(TAG,
+												"******** Start Recording ********");
+										mIsRecording = true;
+										mRecordData = addRecordData(convertShimmerDataList(mWrapWindowData));
+										mEndingPoint = mRecordData.size();
+									}
+
+									mWrapWindowData.clear();
+									mWrapWindowCounter = 0;
+								}
+							} else {
+								/* inspect every window while recording */
 
 								isDetected = isWindowPositiveForSignal(convertShimmerDataList(mWindowData));
 								Log.d(TAG, "isDetected:" + isDetected);
 
-								if (isDetected) {
-									mRecordData.clear();
+								mRecordData
+										.addAll(convertShimmerDataList(mWindowData));
+
+								if (mRecordData.size() > maxRecordWindowSize) {
+									mIsRecording = false;
+									mEndingWindowCounter = 0;
+									startButton.setEnabled(true);
+									isListening = false;
 
 									Log.d(TAG,
-											"******** Start Recording ********");
-									mIsRecording = true;
-									mRecordData = addRecordData(convertShimmerDataList(mWrapWindowData));
-									mEndingPoint = mRecordData.size();
-								}
+											"******** End Recording Max Time Reached ********");
+									Log.d(TAG, "mRecordData.size():"
+											+ mRecordData.size());
 
-								mWrapWindowData.clear();
-								mWrapWindowCounter = 0;
-							}
-						} else {
-							/* inspect every window while recording */
-
-							isDetected = isWindowPositiveForSignal(convertShimmerDataList(mWindowData));
-							Log.d(TAG, "isDetected:" + isDetected);
-
-							mRecordData
-									.addAll(convertShimmerDataList(mWindowData));
-
-							if (!isDetected) {
-								mEndingWindowCounter++;
-							} else {
-								mEndingWindowCounter = 0;// mEndingWindowMax
-															// consecutive
-															// non-detected
-															// windows is
-															// considered to
-															// be ended.
-							}
-
-							if (mEndingWindowCounter == 0)
-								mEndingPoint = mRecordData.size();
-
-							if (mEndingWindowCounter >= mEndingWindowMax) {
-
-								mIsRecording = false;
-
-								mEndingWindowCounter = 0;
-
-								mWrapWindowCounter = 0;
-								mWrapWindowData.clear();
-
-								Log.d(TAG, "******** End Recording ********");
-
-								/*
-								 * end with one extra previous window.
-								 */
-								if (mRecordData.size() > 8 * mWindowSize
-										&& mRecordData.size() < 20 * mWindowSize) {
-									MyShimmerDataList toMatchData = MyShimmerDataList
-											.subList(mRecordData, 0,
-													mEndingPoint + mWindowSize);
+									MyShimmerDataList toMatchData = mRecordData;
 									logWindow(toMatchData);
-									calcFeatures(toMatchData);
+
+									/**
+									 * calculate features, matching trained
+									 * models, and display result.
+									 **/
+									int type = model.classify(calcFeatures(
+											toMatchData, false));
+									if (type >= 0
+											&& type < GestureNames.types[gestureType].length) {
+										resultText
+												.setText(GestureNames.types[gestureType][type]);
+									}
 								}
 
-								// TODO: calculate features and matching trained
-								// models.
+								// if (!isDetected) {
+								// mEndingWindowCounter++;
+								// } else {
+								// mEndingWindowCounter = 0;// mEndingWindowMax
+								// // consecutive
+								// // non-detected
+								// // windows is
+								// // considered to
+								// // be ended.
+								// mEndingPoint = mRecordData.size();
+								// }
+								//
+								// if (mEndingWindowCounter == 0) {
+								// // mEndingPoint = mRecordData.size();
+								// }
+								//
+								// if (mEndingWindowCounter >= mEndingWindowMax)
+								// {
+								//
+								// mIsRecording = false;
+								//
+								// mEndingWindowCounter = 0;
+								//
+								// mWrapWindowCounter = 0;
+								// mWrapWindowData.clear();
+								//
+								// Log.d(TAG,
+								// "******** End Recording ********");
+								//
+								// Log.d(TAG, "mRecordData.size():"
+								// + mRecordData.size());
+								// /*
+								// * end with one extra following window.
+								// */
+								// if (mRecordData.size() >=
+								// minRecordWindowSize) {
+								// MyShimmerDataList toMatchData =
+								// MyShimmerDataList
+								// .subList(mRecordData, 0,
+								// mEndingPoint
+								// + mWindowSize);
+								// logWindow(toMatchData);
+								//
+								// /**
+								// * calculate features, matching trained
+								// * models, and display result.
+								// **/
+								// int type = model.classify(calcFeatures(
+								// toMatchData, false));
+								// if (type >= 0
+								// && type <
+								// GestureNames.types[gestureType].length) {
+								// resultText
+								// .setText(GestureNames.types[gestureType][type]);
+								// }
+								// }
+								// }
 							}
+							mWindowData.clear();
+							mWindowCounter = 0;
 						}
-
-						mWindowData.clear();
-						mWindowCounter = 0;
 					}
 				}
 				break;
@@ -159,6 +239,8 @@ public class RecogIntermittentActivity extends RecogActivity {
 
 		if (mService != null)
 			mService.deRegisterGraphHandler(mActivityHandler);
+		
+		isListening = false;
 	}
 
 	public void onPause() {
@@ -174,6 +256,8 @@ public class RecogIntermittentActivity extends RecogActivity {
 
 		if (mService != null)
 			mService.deRegisterGraphHandler(mActivityHandler);
+		
+		isListening = false;
 	}
 
 	public void onResume() {
@@ -189,6 +273,9 @@ public class RecogIntermittentActivity extends RecogActivity {
 
 		if (mService != null)
 			mService.registerGraphHandler(mActivityHandler);
+		
+		startButton.setEnabled(true);
+		isListening = false;
 	}
 
 	private static MyShimmerDataList convertShimmerDataList(

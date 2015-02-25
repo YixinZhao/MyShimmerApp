@@ -4,55 +4,50 @@ import com.example.myshimmerapp.R;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
 import android.view.Window;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class SettingsActivity extends MyServiceActivity {
 
 	private static final String TAG = "MyShimmerApp.SettingsActivity";
 
-	public static final String Settings_Extra_Gesture_Type = "GestureType";
-	public static final String Settings_Extra_Sampling_Rate = "SamplingRate";
-	public static final String Settings_Extra_Recog_Mode = "RecogMode";
-	public static final String Settings_Extra_Window_Sizes = "WindowSizes";
+	public static final String Settings_Extra_Gesture_Type = "Settings_GestureType";
+	public static final String Settings_Extra_Sampling_Rate = "Settings_SamplingRate";
+	public static final String Settings_Extra_ML_Algo = "Settings_MLAlgorithm";
+	public static final String Settings_Extra_Recog_Mode = "Settings_RecogMode";
+	// public static final String Settings_Extra_Window_Sizes = "WindowSizes";
 
 	public static final String[] sampling_rates = { "8", "16", "51.2", "102.4",
 			"128", "204.8", "256", "512", "1024" };
-	public static final String[] gesture_types = { "Finger", "Hand", "Arm" };
+	public static final String[] gesture_types = { "Finger", "Hand", "Writing" };
+	public static final String[] ml_algos = { "Simple Logistic",
+			"Decision Tree" };
 	public static final String[] recog_modes = { "Windowed", "Continous" };
 
 	private Button doneButton;
 	private Button cancelButton;
 	private RadioGroup samplingGroup;
 	private RadioGroup gestureGroup;
+	private RadioGroup mlalgoGroup;
 	private RadioGroup recogGroup;
 
-	private LinearLayout textLayout;
-	private EditText big_Win_Size_Text;
-	private EditText small_Win_Size_Text;
+	// private LinearLayout textLayout;
+	// private EditText big_Win_Size_Text;
+	// private EditText small_Win_Size_Text;
 
 	String gesture;
 	String rate;
 	String recog;
-	int[] windows = new int[2];
+	String mlalgo;
+
+	// int[] windows = new int[2];
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,6 +67,7 @@ public class SettingsActivity extends MyServiceActivity {
 				intent.putExtra(Settings_Extra_Sampling_Rate, rate);
 				intent.putExtra(Settings_Extra_Gesture_Type, gesture);
 				intent.putExtra(Settings_Extra_Recog_Mode, recog);
+				intent.putExtra(Settings_Extra_ML_Algo, mlalgo);
 				// if (recog.equals(recog_modes[0])) {
 				// if (big_Win_Size_Text.getText() != null)
 				// windows[0] = Integer.parseInt(big_Win_Size_Text
@@ -95,6 +91,7 @@ public class SettingsActivity extends MyServiceActivity {
 
 		samplingGroup = (RadioGroup) findViewById(R.id.sample_rate_group);
 		gestureGroup = (RadioGroup) findViewById(R.id.gesture_type_group);
+		mlalgoGroup = (RadioGroup) findViewById(R.id.ml_algo_group);
 		recogGroup = (RadioGroup) findViewById(R.id.recog_mode_group);
 
 		// set initial value
@@ -114,6 +111,7 @@ public class SettingsActivity extends MyServiceActivity {
 		if (extras != null) {
 			gesture = gesture_types[extras.getInt(Settings_Extra_Gesture_Type)];
 			recog = recog_modes[extras.getInt(Settings_Extra_Recog_Mode)];
+			mlalgo = ml_algos[extras.getInt(Settings_Extra_ML_Algo)];
 			// windows = extras.getIntArray(Settings_Extra_Window_Sizes);
 		}
 		for (String str : gesture_types) {
@@ -134,24 +132,34 @@ public class SettingsActivity extends MyServiceActivity {
 				radio.setChecked(true);
 			}
 		}
+		for (String str : ml_algos) {
+			RadioButton radio = new RadioButton(this);
+			radio.setText(str);
+
+			mlalgoGroup.addView(radio);
+			if (mlalgo != null && mlalgo.equals(str)) {
+				radio.setChecked(true);
+			}
+		}
 
 		samplingGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
-		gestureGroup.setOnCheckedChangeListener(mCheckedChangeListener2);
-		recogGroup.setOnCheckedChangeListener(mCheckedChangeListener3);
-
+		gestureGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
+		recogGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
+		mlalgoGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
 		// textLayout = (LinearLayout) findViewById(R.id.Recog_mode_text);
 		// textLayout.setVisibility(View.GONE);
 
-		big_Win_Size_Text = (EditText) findViewById(R.id.big_window_size);
-		small_Win_Size_Text = (EditText) findViewById(R.id.small_window_size);
-
-		if (windows != null) {
-
-			big_Win_Size_Text.setText("0");
-			small_Win_Size_Text.setText("0");
-		}
-		big_Win_Size_Text.setVisibility(View.INVISIBLE);
-		small_Win_Size_Text.setVisibility(View.INVISIBLE);
+		// big_Win_Size_Text = (EditText) findViewById(R.id.big_window_size);
+		// small_Win_Size_Text = (EditText)
+		// findViewById(R.id.small_window_size);
+		//
+		// if (windows != null) {
+		//
+		// big_Win_Size_Text.setText("0");
+		// small_Win_Size_Text.setText("0");
+		// }
+		// big_Win_Size_Text.setVisibility(View.INVISIBLE);
+		// small_Win_Size_Text.setVisibility(View.INVISIBLE);
 
 		// big_Win_Size_Text.setOnFocusChangeListener(mFocusChangeListener1);
 		// small_Win_Size_Text.setOnFocusChangeListener(mFocusChangeListener2);
@@ -164,70 +172,50 @@ public class SettingsActivity extends MyServiceActivity {
 			Log.d(TAG, "group:" + group + ";id:" + checkedId);
 			RadioButton rb = (RadioButton) findViewById(checkedId);
 			if (rb != null) {
-				rate = rb.getText().toString();
-				Log.d(TAG, rate);
-			}
-		}
-	};
-
-	private OnCheckedChangeListener mCheckedChangeListener2 = new OnCheckedChangeListener() {
-
-		@Override
-		public void onCheckedChanged(RadioGroup group, int checkedId) {
-			Log.d(TAG, "group:" + group + ";id:" + checkedId);
-
-			RadioButton rb = (RadioButton) findViewById(checkedId);
-			if (rb != null) {
-				gesture = rb.getText().toString();
-				Log.d(TAG, gesture);
-			}
-		}
-	};
-
-	private OnCheckedChangeListener mCheckedChangeListener3 = new OnCheckedChangeListener() {
-
-		@Override
-		public void onCheckedChanged(RadioGroup group, int checkedId) {
-			Log.d(TAG, "group:" + group + ";id:" + checkedId);
-
-			RadioButton rb = (RadioButton) findViewById(checkedId);
-			if (rb != null) {
-				String input = rb.getText().toString();
-				if (input.equals(recog_modes[0])) {
-					big_Win_Size_Text.setVisibility(View.VISIBLE);
-					small_Win_Size_Text.setVisibility(View.VISIBLE);
-				}
-				recog = input;
-				Log.d(TAG, recog);
-			}
-		}
-	};
-
-	private OnFocusChangeListener mFocusChangeListener1 = new OnFocusChangeListener() {
-
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (v instanceof EditText) {
-				EditText t = (EditText) v;
-				if (hasFocus) {
-					t.setText("");
-				} else if (t.getText() != null) {
-					t.setText("# of small windows/big window");
+				if (group == samplingGroup) {
+					rate = rb.getText().toString();
+					Log.d(TAG, rate);
+				} else if (group == gestureGroup) {
+					gesture = rb.getText().toString();
+					Log.d(TAG, gesture);
+				} else if (group == recogGroup) {
+					recog = rb.getText().toString();
+					Log.d(TAG, recog);
+				} else if (group == mlalgoGroup) {
+					mlalgo = rb.getText().toString();
+					Log.d(TAG, mlalgo);
 				}
 			}
 		}
 	};
 
-	private OnFocusChangeListener mFocusChangeListener2 = new OnFocusChangeListener() {
-
-		public void onFocusChange(View v, boolean hasFocus) {
-			if (v instanceof EditText) {
-				EditText t = (EditText) v;
-				if (hasFocus) {
-					t.setText("");
-				} else if (t.getText() != null) {
-					t.setText("# of shimmer datas/small window");
-				}
-			}
-		}
-	};
+	// private OnFocusChangeListener mFocusChangeListener1 = new
+	// OnFocusChangeListener() {
+	//
+	// public void onFocusChange(View v, boolean hasFocus) {
+	// if (v instanceof EditText) {
+	// EditText t = (EditText) v;
+	// if (hasFocus) {
+	// t.setText("");
+	// } else if (t.getText() != null) {
+	// t.setText("# of small windows/big window");
+	// }
+	// }
+	// }
+	// };
+	//
+	// private OnFocusChangeListener mFocusChangeListener2 = new
+	// OnFocusChangeListener() {
+	//
+	// public void onFocusChange(View v, boolean hasFocus) {
+	// if (v instanceof EditText) {
+	// EditText t = (EditText) v;
+	// if (hasFocus) {
+	// t.setText("");
+	// } else if (t.getText() != null) {
+	// t.setText("# of shimmer datas/small window");
+	// }
+	// }
+	// }
+	// };
 }

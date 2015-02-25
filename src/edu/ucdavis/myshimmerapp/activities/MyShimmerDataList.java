@@ -1,8 +1,9 @@
 package edu.ucdavis.myshimmerapp.activities;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+
+import org.apache.commons.math3.util.DoubleArray;
+import org.apache.commons.math3.util.ResizableDoubleArray;
 
 import com.shimmerresearch.driver.FormatCluster;
 import com.shimmerresearch.driver.ObjectCluster;
@@ -19,81 +20,99 @@ public class MyShimmerDataList {
 
 	private final static int Serie_Max = 7;
 
-	List<Double> timestamp = new ArrayList<Double>();
-	List<Double> acclX = new ArrayList<Double>();
-	List<Double> acclY = new ArrayList<Double>();
-	List<Double> acclZ = new ArrayList<Double>();
-	List<Double> gyroX = new ArrayList<Double>();
-	List<Double> gyroY = new ArrayList<Double>();
-	List<Double> gyroZ = new ArrayList<Double>();
+	DoubleArray timestamp = new ResizableDoubleArray();
+	DoubleArray acclX = new ResizableDoubleArray();
+	DoubleArray acclY = new ResizableDoubleArray();
+	DoubleArray acclZ = new ResizableDoubleArray();
+	DoubleArray gyroX = new ResizableDoubleArray();
+	DoubleArray gyroY = new ResizableDoubleArray();
+	DoubleArray gyroZ = new ResizableDoubleArray();
 
 	public double[] getSingle(int i) {
-		double[] ret = { timestamp.get(i), acclX.get(i), acclY.get(i),
-				acclZ.get(i), gyroX.get(i), gyroY.get(i), gyroZ.get(i) };
+		double[] ret = new double[Serie_Max];
+		ret[Serie_ACCL_X] = acclX.getElement(i);
+		ret[Serie_ACCL_Y] = acclY.getElement(i);
+		ret[Serie_ACCL_Z] = acclZ.getElement(i);
+		ret[Serie_GYRO_X] = gyroX.getElement(i);
+		ret[Serie_GYRO_Y] = gyroY.getElement(i);
+		ret[Serie_GYRO_Z] = gyroZ.getElement(i);
+		ret[Serie_TimeStamp] = timestamp.getElement(i);
 		return ret;
 	}
 
-	public String getSingleStr(int i) {
-		String ret = Math.round(timestamp.get(i)) + ","
-				+ String.format("%.2f", acclX.get(i)).toString() + ","
-				+ String.format("%.2f", acclY.get(i)).toString() + ","
-				+ String.format("%.2f", acclZ.get(i)).toString() + ","
-				+ String.format("%.2f", gyroX.get(i)).toString() + ","
-				+ String.format("%.2f", gyroY.get(i)).toString() + ","
-				+ String.format("%.2f", gyroZ.get(i)).toString();
+	public String getSingleInString(int i) {
+		String ret = Math.round(timestamp.getElement(i)) + ","
+				+ String.format("%.2f", acclX.getElement(i)).toString() + ","
+				+ String.format("%.2f", acclY.getElement(i)).toString() + ","
+				+ String.format("%.2f", acclZ.getElement(i)).toString() + ","
+				+ String.format("%.2f", gyroX.getElement(i)).toString() + ","
+				+ String.format("%.2f", gyroY.getElement(i)).toString() + ","
+				+ String.format("%.2f", gyroZ.getElement(i)).toString();
 		return ret;
 	}
 
-	public List<Double> getSerie(int i) {
-		List<Double> ret = null;
+	public double[] getSerie(int i) {
+		double[] ret = null;
 		switch (i) {
 		case Serie_ACCL_X:
-			ret = acclX;
+			ret = acclX.getElements();
 			break;
 		case Serie_ACCL_Y:
-			ret = acclY;
+			ret = acclY.getElements();
 			break;
 		case Serie_ACCL_Z:
-			ret = acclZ;
+			ret = acclZ.getElements();
 			break;
 		case Serie_GYRO_X:
-			ret = gyroX;
+			ret = gyroX.getElements();
 			break;
 		case Serie_GYRO_Y:
-			ret = gyroY;
+			ret = gyroY.getElements();
 			break;
 		case Serie_GYRO_Z:
-			ret = gyroZ;
+			ret = gyroZ.getElements();
 			break;
 		case Serie_TimeStamp:
-			ret = timestamp;
+			ret = timestamp.getElements();
 			break;
 		}
 		return ret;
 	}
 
+	public void copySingle(double[] input) {
+		if (input != null && input.length == Serie_Max) {
+			acclX.addElement(input[Serie_ACCL_X]);
+			acclY.addElement(input[Serie_ACCL_Y]);
+			acclZ.addElement(input[Serie_ACCL_Z]);
+			gyroX.addElement(input[Serie_GYRO_X]);
+			gyroY.addElement(input[Serie_GYRO_Y]);
+			gyroZ.addElement(input[Serie_GYRO_Z]);
+			timestamp.addElement(input[Serie_TimeStamp]);
+		}
+	}
+
 	public void add(double[] input) {
-		if (input != null && input.length == 6) {
-			timestamp
-					.add((double) Math.round((System.currentTimeMillis() % 100000)));
-			acclX.add(input[Serie_ACCL_X]);
-			acclY.add(input[Serie_ACCL_Y]);
-			acclZ.add(input[Serie_ACCL_Z]);
-			gyroX.add(input[Serie_GYRO_X]);
-			gyroY.add(input[Serie_GYRO_Y]);
-			gyroZ.add(input[Serie_GYRO_Z]);
+		if (input != null && input.length == Serie_Max - 1) {
+			timestamp.addElement((double) Math.round((System
+					.currentTimeMillis() % 100000)));
+			acclX.addElement(input[Serie_ACCL_X]);
+			acclY.addElement(input[Serie_ACCL_Y]);
+			acclZ.addElement(input[Serie_ACCL_Z]);
+			gyroX.addElement(input[Serie_GYRO_X]);
+			gyroY.addElement(input[Serie_GYRO_Y]);
+			gyroZ.addElement(input[Serie_GYRO_Z]);
 		}
 	}
 
 	public void addAll(MyShimmerDataList list) {
 		if (list != null && !list.isEmpty()) {
-			timestamp.addAll(list.getSerie(Serie_TimeStamp));
-			acclX.addAll(list.getSerie(Serie_ACCL_X));
-			acclY.addAll(list.getSerie(Serie_ACCL_Y));
-			acclZ.addAll(list.getSerie(Serie_ACCL_Z));
-			gyroX.addAll(list.getSerie(Serie_GYRO_X));
-			gyroY.addAll(list.getSerie(Serie_GYRO_Y));
-			gyroZ.addAll(list.getSerie(Serie_GYRO_Z));
+			timestamp.addElements(list.getSerie(Serie_TimeStamp));
+			acclX.addElements(list.getSerie(Serie_ACCL_X));
+			acclY.addElements(list.getSerie(Serie_ACCL_Y));
+			acclZ.addElements(list.getSerie(Serie_ACCL_Z));
+			gyroX.addElements(list.getSerie(Serie_GYRO_X));
+			gyroY.addElements(list.getSerie(Serie_GYRO_Y));
+			gyroZ.addElements(list.getSerie(Serie_GYRO_Z));
 		}
 	}
 
@@ -108,48 +127,51 @@ public class MyShimmerDataList {
 	}
 
 	public int size() {
-		return timestamp.size();
+		return timestamp.getNumElements();
 	}
 
 	public boolean isEmpty() {
-		return timestamp.isEmpty();
+		return size() == 0 ? true : false;
 	}
 
-	private void addSerie(int i, List<Double> input) {
-		if (input != null && !input.isEmpty()) {
+	private void addSerie(int i, double[] input) {
+		if (input != null && input.length != 0) {
 			switch (i) {
 			case Serie_ACCL_X:
-				acclX.addAll(input);
+				acclX.addElements(input);
 				break;
 			case Serie_ACCL_Y:
-				acclY.addAll(input);
+				acclY.addElements(input);
 				break;
 			case Serie_ACCL_Z:
-				acclZ.addAll(input);
+				acclZ.addElements(input);
 				break;
 			case Serie_GYRO_X:
-				gyroX.addAll(input);
+				gyroX.addElements(input);
 				break;
 			case Serie_GYRO_Y:
-				gyroY.addAll(input);
+				gyroY.addElements(input);
 				break;
 			case Serie_GYRO_Z:
-				gyroZ.addAll(input);
+				gyroZ.addElements(input);
 				break;
 			case Serie_TimeStamp:
-				timestamp.addAll(input);
+				timestamp.addElements(input);
 				break;
 			}
 		}
 	}
 
+	/*
+	 * start position inclusive; end position exclusive
+	 */
 	public static MyShimmerDataList subList(MyShimmerDataList input,
 			int startPos, int endPos) {
 		MyShimmerDataList ret = new MyShimmerDataList();
 
 		if (input != null && !input.isEmpty()) {
-			for (int i = 0; i < Serie_Max; i++) {
-				ret.addSerie(i, input.getSerie(i).subList(startPos, endPos));
+			for (int j = startPos; j < endPos; j++) {
+				ret.copySingle(input.getSingle(j));
 			}
 		}
 		return ret;

@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="370dp"
+        android:layout_height="346dp"
         android:layout_marginTop="0.01pt"
         android:orientation="vertical" >
 
@@ -31,7 +31,7 @@
             android:layout_weight="0.5"
             title="Shimmer Data Plot" />
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/linearLayout2"
         android:layout_width="fill_parent"
@@ -41,20 +41,28 @@
 
         <Button
             android:id="@+id/button_start"
-            android:layout_width="fill_parent"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:text="@string/button_start" >
         </Button>
 
+        <Button
+            android:id="@+id/button_build"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="1dp"
+            android:text="@string/button_build" >
+        </Button>
     </LinearLayout>
-    
+
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="52dp"
         android:layout_marginTop="0.02pt"
         android:orientation="horizontal" >
 
@@ -62,7 +70,6 @@
             android:id="@+id/gesture_name"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="10dp"
             android:textColor="@color/shimmer_grey"
             android:textStyle="bold" />
     </LinearLayout>

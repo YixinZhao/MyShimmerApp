@@ -5,6 +5,7 @@
     <string name="settings_title">Settings</string>
     <string name="windowed_title">Windowed Recognizing</string>
     <string name="continous_title">Continuous Recognizing</string>
+    <string name="training_title">Training</string>
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_new_devices">New Devices</string>
     
@@ -27,15 +28,19 @@
     <string name="button_stopstreaming">Stop Streaming</string>
     <string name="button_accl">accl</string>
     <string name="button_gyro">gyro</string>
-    <string name="button_startrecog">Start Recognition</string>
+    <string name="button_startrecog">Start Recog</string>
+    <string name="button_starttraining">Start Traning</string>
+    
     <string name="button_done">Done</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_start">Start</string>
     <string name="button_stop">Stop</string>
+    <string name="button_build">Build</string>
     
     <string name="setting_title">Settings</string>
     <string name="setting_title_sample_rate">Sample Rate</string>
     <string name="setting_title_gesture_type">Gesture Type</string>
+    <string name="setting_title_ml_algo">ML Algorithm</string>
     <string name="setting_title_recog_mode">Recog Mode</string>
 
 </resources>
