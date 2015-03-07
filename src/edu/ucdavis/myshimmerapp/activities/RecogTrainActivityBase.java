@@ -129,6 +129,26 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 		dynamicPlot_gyro_realtime.getGraphWidget().setDomainValueFormat(
 				new DecimalFormat("0"));
 
+		dynamicPlot_accl_realtime.getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot_accl_realtime.setBackgroundColor(Color.WHITE);
+		dynamicPlot_accl_realtime.getGraphWidget().getGridBackgroundPaint()
+				.setColor(Color.WHITE);
+		dynamicPlot_accl_realtime.getGraphWidget().getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot_accl_realtime.getGraphWidget().getDomainOriginLinePaint()
+				.setStrokeWidth(3);
+		dynamicPlot_accl_realtime.getGraphWidget().getRangeOriginLinePaint()
+				.setStrokeWidth(3);
+		
+		dynamicPlot_gyro_realtime.getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot_gyro_realtime.setBackgroundColor(Color.WHITE);
+		dynamicPlot_gyro_realtime.getGraphWidget().getGridBackgroundPaint()
+				.setColor(Color.WHITE);
+		dynamicPlot_gyro_realtime.getGraphWidget().getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot_gyro_realtime.getGraphWidget().getDomainOriginLinePaint()
+				.setStrokeWidth(3);
+		dynamicPlot_gyro_realtime.getGraphWidget().getRangeOriginLinePaint()
+				.setStrokeWidth(3);
+
 		resultText = (TextView) findViewById(R.id.gesture_name);
 	}
 
@@ -374,7 +394,7 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 			boolean isTraining) {
 		feature = null;
 		if (input != null && !input.isEmpty()) {
-//			Log.d(TAG, "calcFeatures:" + isTraining);
+			// Log.d(TAG, "calcFeatures:" + isTraining);
 
 			List<String> list = null;
 			if (!isTraining) {

@@ -155,14 +155,14 @@ public class MyServiceActivity extends Activity {
 			double[] datas) {
 
 		String seriesName[] = new String[3];
-		seriesName[0] = "serie 1";
-		seriesName[1] = "serie 2";
-		seriesName[2] = "serie 3";
+		seriesName[0] = "X";
+		seriesName[1] = "Y";
+		seriesName[2] = "Z";
 
 		int colors[] = new int[3];
 		colors[0] = Color.GREEN;
 		colors[1] = Color.RED;
-		colors[2] = Color.YELLOW;
+		colors[2] = Color.BLUE;
 
 		for (int i = 0; i < 3; i++) {
 			List<Number> data;
@@ -183,6 +183,7 @@ public class MyServiceActivity extends Activity {
 			plotDataMap.put(seriesName[i], data);
 			LineAndPointFormatter lapf = new LineAndPointFormatter(colors[i],
 					null, null);
+			lapf.getLinePaint().setStrokeWidth(5);
 			if (plotSeriesMap.get(seriesName[i]) != null) {
 				// if the series exist get the line format
 				plotSeriesMap.get(seriesName[i]).updateData(data);

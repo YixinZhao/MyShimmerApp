@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/app_background_color"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -15,14 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/device_addr"
-            android:textColor="@color/shimmer_grey"
+            android:textColor="@color/black"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textDeviceContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/shimmer_grey" />
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/device_state"
-            android:textColor="@color/shimmer_grey"
+            android:textColor="@color/black"
             android:textStyle="bold" />
 
         <TextView
@@ -44,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/stat_disconnected"
-            android:textColor="@color/shimmer_grey" />
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <LinearLayout
@@ -70,7 +71,8 @@
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="0dp"
                 android:layout_marginTop="2dp"
-                android:text="@string/button_connect" />
+                android:text="@string/button_connect"
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/button_settings"
@@ -80,7 +82,8 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="50dp"
                 android:layout_marginTop="2dp"
-                android:text="@string/button_settings" />
+                android:text="@string/button_settings"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <LinearLayout
@@ -97,7 +100,8 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="0dp"
-                android:text="@string/button_startstreaming" />
+                android:text="@string/button_startstreaming"
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/button_recognition"
@@ -106,7 +110,8 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="0dp"
-                android:text="@string/button_startrecog" >
+                android:text="@string/button_startrecog"
+                android:textColor="@color/black" >
             </Button>
 
             <Button
@@ -116,7 +121,8 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="10dp"
-                android:text="@string/button_starttraining" >
+                android:text="@string/button_starttraining"
+                android:textColor="@color/black" >
             </Button>
         </LinearLayout>
 
@@ -133,7 +139,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
                 android:layout_marginRight="0dp"
-                android:text="@string/button_accl" />
+                android:text="@string/button_accl"
+                android:textColor="@color/black" />
 
             <RadioButton
                 android:id="@+id/button_gyro"
@@ -141,7 +148,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="50dp"
-                android:text="@string/button_gyro" />
+                android:text="@string/button_gyro"
+                android:textColor="@color/black" />
         </LinearLayout>
     </LinearLayout>
 
@@ -154,13 +162,16 @@
 
         <com.androidplot.xy.XYPlot
             android:id="@+id/dynamicPlot"
+            title="Shimmer Data Plot" 
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            title="Shimmer Data Plot" />
+            androidPlot.legendWidget.heightMetric.value="25dp"
+            androidPlot.legendWidget.textPaint.textSize="12dp"
+            androidPlot.titleWidget.labelPaint.textSize="30dp"
+            />
     </LinearLayout>
 
 </LinearLayout>

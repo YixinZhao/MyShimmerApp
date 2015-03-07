@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" 
+    android:background="@color/app_background_color">
 
     <LinearLayout
         android:id="@+id/linearLayout1"
@@ -46,6 +47,7 @@
             android:layout_marginTop="3dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:textColor="@color/black"
             android:text="@string/button_start" >
         </Button>
 
@@ -62,8 +64,12 @@
             android:id="@+id/gesture_name"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/shimmer_grey"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:textSize="35sp"
+            android:textColor="@color/violet"
+            android:text="abc"
+            android:gravity="center"
             android:textStyle="bold" />
     </LinearLayout>
 

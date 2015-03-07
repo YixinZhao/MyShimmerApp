@@ -259,6 +259,18 @@ public class MainActivity extends MyServiceActivity {
 		dynamicPlot.getGraphWidget().setDomainValueFormat(
 				new DecimalFormat("0"));
 
+		dynamicPlot.getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot.setBackgroundColor(Color.WHITE);
+		dynamicPlot.getGraphWidget().getGridBackgroundPaint()
+				.setColor(Color.WHITE);
+		dynamicPlot.getGraphWidget().getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot.getGraphWidget().getDomainOriginLinePaint()
+				.setStrokeWidth(3);
+		dynamicPlot.getGraphWidget().getRangeOriginLinePaint()
+				.setStrokeWidth(3);
+		
+//		dynamicPlot.getLegendWidget().getTextPaint().setTextSize(12);
+//		dynamicPlot.getTitleWidget().getLabelPaint().setTextSize(16);
 	}
 
 	public static Handler mActivityHandler = new Handler() {

@@ -61,11 +61,9 @@ public class TrainingActivity extends RecogTrainActivityBase {
 			@Override
 			public void onClick(View v) {
 				if (isListening == false) {
-					// BuildThread bt = new BuildThread();
-					// bt.run();
+					startButton.setEnabled(false);
 					buildButton.setEnabled(false);
 					new BuildThread().execute();
-					// model.buildClassfiers();
 				}
 			}
 
@@ -351,6 +349,7 @@ public class TrainingActivity extends RecogTrainActivityBase {
 				e.printStackTrace();
 			}
 			buildButton.setEnabled(true);
+			startButton.setEnabled(true);
 		}
 	}
 }

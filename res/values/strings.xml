@@ -1,11 +1,11 @@
 <resources>
 
-    <string name="app_name">MyShimmerApp</string>
-    <string name="main_title">MyShimmerApp</string>
+    <string name="app_name">SmartWatch Gesture Recognition</string>
+    <string name="main_title">SmartWatch Gesture Recognition</string>
     <string name="settings_title">Settings</string>
-    <string name="windowed_title">Windowed Recognizing</string>
-    <string name="continous_title">Continuous Recognizing</string>
-    <string name="training_title">Training</string>
+    <string name="windowed_title">SmartWatch Gesture Recognition</string>
+    <string name="continous_title">SmartWatch Gesture Recognition</string>
+    <string name="training_title">SmartWatch Gesture Training</string>
     <string name="title_paired_devices">Paired Devices</string>
     <string name="title_new_devices">New Devices</string>
     

@@ -3,8 +3,8 @@ package edu.ucdavis.myshimmerapp.ml;
 public class GestureNames {
 
 	private final static String[] fingers = { "f_One", "f_Two", "f_Three",
-			"f_Four", "f_Five", "f_One Twice", "f_Two Twice", "f_Thumb Up",
-			"f_Single Click", "f_Double Click", "f_Zoom In", "f_Zoom Out" };
+			"f_Four", "f_Five", "f_One Twice", "f_Two Twice", "f_Single Click",
+			"f_Double Click", "f_Zoom In", "f_Zoom Out", "f_Thumb Up" };
 
 	private final static String[] hands = { "h_Clockwise Circle",
 			"h_Anti-Clockwise Circle", "h_Down Once", "h_Down Twice",
