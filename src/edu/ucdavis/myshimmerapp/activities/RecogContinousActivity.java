@@ -118,7 +118,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 							} else {
 								mRecordData.addAll(mWindowData);
 
-								if (mRecordData.size() > maxRecordWindowSize) {
+								if (mRecordData.size() >= maxRecordWindowSize) {
 									mIsRecording = false;
 									mEndingWindowCounter = 0;
 									startButton.setEnabled(true);
@@ -126,11 +126,10 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 
 									Log.d(TAG,
 											"******** End Recording Max Time Reached ********");
-//									Log.d(TAG, "mRecordData.size():"
-//											+ mRecordData.size());
+									Log.d(TAG, "mRecordData.size():"
+											+ mRecordData.size());
 
 									MyShimmerDataList toMatchData = mRecordData;
-									logWindow(toMatchData);
 
 									/**
 									 * calculate features, matching trained
@@ -143,6 +142,8 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 										resultText
 												.setText(GestureNames.types[gestureType][type]);
 									}
+									
+									logWindow(toMatchData);
 								}
 								// } else {
 								// if (!isDetected) {
@@ -232,6 +233,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 		super.onDestroy();
 
 		mWindowData.clear();
+		mWindowDataBak.clear();
 		mRecordData.clear();
 		mWindowCounter = 0;
 		mEndingWindowCounter = 0;
@@ -247,6 +249,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 		super.onPause();
 
 		mWindowData.clear();
+		mWindowDataBak.clear();
 		mRecordData.clear();
 		mWindowCounter = 0;
 		mEndingWindowCounter = 0;
@@ -262,6 +265,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 		super.onResume();
 
 		mWindowData.clear();
+		mWindowDataBak.clear();
 		mRecordData.clear();
 		mWindowCounter = 0;
 		mEndingWindowCounter = 0;

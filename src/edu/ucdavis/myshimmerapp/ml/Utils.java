@@ -24,19 +24,19 @@ public class Utils {
 	public static IirFilterCoefficients getFilterCoef(
 			FilterPassType filter_type, int filterOrder, double fcf1,
 			double fcf2) {
-//		Log.d(TAG, "getFilterCoef:" + filter_type + "," + fcf1 + "," + fcf2);
+		// Log.d(TAG, "getFilterCoef:" + filter_type + "," + fcf1 + "," + fcf2);
 		IirFilterCoefficients coef = IirFilterDesignFisher.design(filter_type,
 				FilterCharacteristicsType.butterworth, filterOrder, 0, fcf1,
 				fcf2);
 
-		// {
-		// for (double d : coef.a) {
-		// Log.d(TAG, "a:" + d);
-		// }
-		// for (double d : coef.b) {
-		// Log.d(TAG, "b:" + d);
-		// }
-		// }
+//		{
+//			for (double d : coef.a) {
+//				Log.d(TAG, "a:" + d);
+//			}
+//			for (double d : coef.b) {
+//				Log.d(TAG, "b:" + d);
+//			}
+//		}
 
 		return coef;
 	}
@@ -46,7 +46,7 @@ public class Utils {
 
 			String LogFileName = name + ".csv";
 			String logFilePath = Environment.getExternalStorageDirectory()
-					+ "/ShimmerTest/";
+					+ "/ShimmerTest/Logs/";
 			File LogFile = new File(logFilePath, LogFileName);
 			Log.d(TAG, LogFileName);
 			try {
@@ -74,7 +74,7 @@ public class Utils {
 			}
 			String LogFileName = name + ".csv";
 			String logFilePath = Environment.getExternalStorageDirectory()
-					+ "/ShimmerTest/";
+					+ "/ShimmerTest/Logs/";
 			File LogFile = new File(logFilePath, LogFileName);
 			try {
 				BufferedWriter buf = new BufferedWriter(new FileWriter(LogFile,
@@ -95,13 +95,16 @@ public class Utils {
 		double[] ret = null;
 
 		if (input != null && input.length != 0) {
-			// Log.d(TAG, "filtfilt" + input.length);
 			ret = new double[input.length];
+			
 			IirFilter filter = new IirFilter(coef);
 
 			for (int i = 0; i < input.length; i++) {
 				ret[i] = filter.step(input[i]);
 			}
+
+//			DigitalFilter filter = new DigitalFilter(coef.b, coef.a, input);
+//			ret = filter.zeroFilter();
 		}
 		return ret;
 	}

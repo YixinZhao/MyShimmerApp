@@ -131,7 +131,7 @@ public class RecogIntermittentActivity extends RecogTrainActivityBase {
 								mRecordData
 										.addAll(convertShimmerDataList(mWindowData));
 
-								if (mRecordData.size() > maxRecordWindowSize) {
+								if (mRecordData.size() >= maxRecordWindowSize) {
 									mIsRecording = false;
 									mEndingWindowCounter = 0;
 									startButton.setEnabled(true);
@@ -143,7 +143,7 @@ public class RecogIntermittentActivity extends RecogTrainActivityBase {
 											+ mRecordData.size());
 
 									MyShimmerDataList toMatchData = mRecordData;
-									logWindow(toMatchData);
+
 
 									/**
 									 * calculate features, matching trained
@@ -156,6 +156,8 @@ public class RecogIntermittentActivity extends RecogTrainActivityBase {
 										resultText
 												.setText(GestureNames.types[gestureType][type]);
 									}
+									
+									logWindow(toMatchData);
 								}
 
 								// if (!isDetected) {

@@ -103,8 +103,11 @@ public class FeatureConstructor {
 				// lowenergy[i] = datas[i];
 				// modvigenergy[i] = datas[i];
 
+				// Utils.logTimeDom(datas[i], "datas_" + i);
 				lowpass[i] = Utils.filtfilt(lowPass_coef, datas[i]);
+				// Utils.logTimeDom(lowpass[i], "lowpass_" + i);
 				bandpass[i] = Utils.filtfilt(bandPass_coef, datas[i]);
+				// Utils.logTimeDom(lowpass[i], "bandpass" + i);
 
 				bandenergy[i] = Utils.filtfilt(bandEnergy_coef, datas[i]);
 				lowenergy[i] = Utils.filtfilt(lowEnergy_coef, datas[i]);
@@ -130,7 +133,7 @@ public class FeatureConstructor {
 	}
 
 	private void calculateFeature() {
-//		Log.d(TAG, "calculateFeature ");
+		// Log.d(TAG, "calculateFeature ");
 		for (int i = 0; i < feature.size(); i++) {
 
 			String featueName = feature.getName(i);
@@ -138,7 +141,7 @@ public class FeatureConstructor {
 			int index = Integer.parseInt(featueName.substring(featueName
 					.length() - 1));
 
-//			Log.d(TAG, "className:" + className + "_" + index);
+			// Log.d(TAG, "className:" + className + "_" + index);
 			try {
 
 				FeatureCalculationInterface handler = (FeatureCalculationInterface) Class

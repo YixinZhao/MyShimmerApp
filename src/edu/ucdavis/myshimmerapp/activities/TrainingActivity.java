@@ -151,13 +151,11 @@ public class TrainingActivity extends RecogTrainActivityBase {
 
 									Log.d(TAG,
 											"******** End Recording Max Time Reached ********");
-									// Log.d(TAG, "mRecordData.size():"
-									// + mRecordData.size());
+									Log.d(TAG, "mRecordData.size():"
+											+ mRecordData.size());
 
 									MyShimmerDataList toMatchData = mRecordData;
-
-									logWindow(toMatchData);
-
+									
 									/*
 									 * add instance for training, display
 									 * gesture name
@@ -177,6 +175,9 @@ public class TrainingActivity extends RecogTrainActivityBase {
 											.setText(GestureNames.types[gestureType][gest_count]
 													+ ":"
 													+ String.valueOf(count + 1));
+									
+									logWindow(toMatchData);
+
 								}
 								// } else {
 								//
@@ -279,6 +280,7 @@ public class TrainingActivity extends RecogTrainActivityBase {
 		super.onDestroy();
 
 		mWindowData.clear();
+		mWindowDataBak.clear();
 		mRecordData.clear();
 		mWindowCounter = 0;
 		mEndingWindowCounter = 0;
@@ -296,6 +298,7 @@ public class TrainingActivity extends RecogTrainActivityBase {
 		super.onPause();
 
 		mWindowData.clear();
+		mWindowDataBak.clear();
 		mRecordData.clear();
 		mWindowCounter = 0;
 		mEndingWindowCounter = 0;
@@ -313,6 +316,7 @@ public class TrainingActivity extends RecogTrainActivityBase {
 		super.onResume();
 
 		mWindowData.clear();
+		mWindowDataBak.clear();
 		mRecordData.clear();
 		mWindowCounter = 0;
 		mEndingWindowCounter = 0;

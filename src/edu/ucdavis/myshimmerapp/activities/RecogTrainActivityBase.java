@@ -38,7 +38,7 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 	protected static int gestureType = 0;
 	protected static int mlAlgo = 0;
 
-	protected final static double maxRecordTime = 2.5;// 3.2s
+	protected final static double maxRecordTime = 2.5;//
 	protected final static double minRecordTime = 1;// 1s
 	protected static double maxRecordWindowSize = maxRecordTime * samplingRate;
 	protected static double minRecordWindowSize = minRecordTime * samplingRate;
@@ -133,17 +133,19 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 		dynamicPlot_accl_realtime.setBackgroundColor(Color.WHITE);
 		dynamicPlot_accl_realtime.getGraphWidget().getGridBackgroundPaint()
 				.setColor(Color.WHITE);
-		dynamicPlot_accl_realtime.getGraphWidget().getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot_accl_realtime.getGraphWidget().getBackgroundPaint()
+				.setColor(Color.WHITE);
 		dynamicPlot_accl_realtime.getGraphWidget().getDomainOriginLinePaint()
 				.setStrokeWidth(3);
 		dynamicPlot_accl_realtime.getGraphWidget().getRangeOriginLinePaint()
 				.setStrokeWidth(3);
-		
+
 		dynamicPlot_gyro_realtime.getBackgroundPaint().setColor(Color.WHITE);
 		dynamicPlot_gyro_realtime.setBackgroundColor(Color.WHITE);
 		dynamicPlot_gyro_realtime.getGraphWidget().getGridBackgroundPaint()
 				.setColor(Color.WHITE);
-		dynamicPlot_gyro_realtime.getGraphWidget().getBackgroundPaint().setColor(Color.WHITE);
+		dynamicPlot_gyro_realtime.getGraphWidget().getBackgroundPaint()
+				.setColor(Color.WHITE);
 		dynamicPlot_gyro_realtime.getGraphWidget().getDomainOriginLinePaint()
 				.setStrokeWidth(3);
 		dynamicPlot_gyro_realtime.getGraphWidget().getRangeOriginLinePaint()

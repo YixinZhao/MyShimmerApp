@@ -1,8 +1,11 @@
 package edu.ucdavis.myshimmerapp.ml;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -134,94 +137,92 @@ public class Model {
 		boolean ret = false;
 		Log.d(TAG, "build");
 
-		InfoGainAttributeEval infoGainEval = new InfoGainAttributeEval();
-		try {
+		if (logWholeTrainingDataSet()) {
+			InfoGainAttributeEval infoGainEval = new InfoGainAttributeEval();
+			try {
+				/* Attribute Selection */
+				{
+					int origAttrCount = trainingDataSet.numAttributes() - 1;/*
+																			 * except
+																			 * class
+																			 * attributes
+																			 */
 
-			int origAttrCount = trainingDataSet.numAttributes() - 1;/*
-																	 * except
-																	 * class
-																	 * attributes
-																	 */
-			double[] scores = new double[origAttrCount];
-			double[] indexs = new double[origAttrCount];
+					double[] scores = new double[origAttrCount];
+					double[] indexs = new double[origAttrCount];
 
-			/* Attribute Selection */
-			infoGainEval.buildEvaluator(trainingDataSet);
-			Log.d(TAG, "attribute selection" + infoGainEval.toString());
+					infoGainEval.buildEvaluator(trainingDataSet);
+					Log.d(TAG, "attribute selection" + infoGainEval.toString());
 
-			Log.d(TAG,
-					"original dataSet.numAttributes():"
+					Log.d(TAG, "original dataSet.numAttributes():"
 							+ trainingDataSet.numAttributes());
-			Log.d(TAG,
-					"original dataSet.classIndex():"
+					Log.d(TAG, "original dataSet.classIndex():"
 							+ trainingDataSet.classIndex());
 
-			for (int i = 0; i < origAttrCount; i++) {
-				indexs[i] = i;
-				scores[i] = infoGainEval.evaluateAttribute(i);
-			}
+					for (int i = 0; i < origAttrCount; i++) {
+						indexs[i] = i;
+						scores[i] = infoGainEval.evaluateAttribute(i);
+					}
 
-			for (int i = 0; i < origAttrCount; i++) {
-				Log.d(TAG, "scores, " + trainingDataSet.attribute(i).name()
-						+ ":" + scores[i]);
-			}
+					for (int i = 0; i < origAttrCount; i++) {
+						Log.d(TAG, "scores, "
+								+ trainingDataSet.attribute(i).name() + ":"
+								+ scores[i]);
+					}
 
-			MathArrays.sortInPlace(scores, OrderDirection.DECREASING, indexs);
+					MathArrays.sortInPlace(scores, OrderDirection.DECREASING,
+							indexs);
 
-			/* retain only highest ten attributes according to score */
-			// int[] indicesToRemove = new int[origAttrCount - 10];
-			// for (int i = 0; i < 10; i++) {
-			// Log.d(TAG,
-			// "highest ten, "
-			// + trainingDataSet.attribute((int) indexs[i])
-			// .name() + ":" + scores[i]);
-			// }
+					int startPoint = 0;
+					for (int i = 0; i < origAttrCount; i++) {
+						if (scores[i] <= 1 || i >= 20) {
+							startPoint = i;
+							break;
+						}
+					}
+					int[] indicesToRemove = new int[origAttrCount - startPoint];
 
-			int startPoint = 0;
-			for (int i = 0; i < origAttrCount; i++) {
-				if (scores[i] <= 1 || i >= 20) {
-					startPoint = i;
-					break;
+					for (int i = 0; i < indicesToRemove.length; i++) {
+						indicesToRemove[i] = (int) indexs[i + startPoint];
+					}
+
+					/* use filter to remove */
+					Remove remove = new Remove();
+					remove.setAttributeIndicesArray(indicesToRemove);
+					remove.setInputFormat(trainingDataSet);
+
+					modelDataSet = Filter.useFilter(trainingDataSet, remove);
+					Log.d(TAG,
+							"afterwards newdataSet.numAttributes():"
+									+ modelDataSet.numAttributes()
+									+ ",newdataSet.numInstances():"
+									+ modelDataSet.numInstances());
+					for (int i = 0; i < modelDataSet.numAttributes(); i++) {
+						Log.d(TAG, modelDataSet.attribute(i).name());
+					}
 				}
+
+				/* Build Classifier */
+				logistic.buildClassifier(modelDataSet);
+
+				Log.d(TAG, "SimpleLogistic:" + logistic.toString());
+				forest.buildClassifier(modelDataSet);
+				Log.d(TAG, "RandomForest Options:" + forest.getOptions());
+				Log.d(TAG, "RandomForest:" + forest.toString());
+
+				saveModelClassifier();
+
+				/* print evaluations */
+				Evaluation eval = new Evaluation(modelDataSet);
+				eval.evaluateModel(logistic, modelDataSet);
+				Log.d(TAG, "eval logistic:" + eval.toSummaryString());
+				eval.evaluateModel(forest, modelDataSet);
+				Log.d(TAG, "eval forest:" + eval.toSummaryString());
+
+				ret = true;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			int[] indicesToRemove = new int[origAttrCount - startPoint];
-
-			for (int i = 0; i < indicesToRemove.length; i++) {
-				indicesToRemove[i] = (int) indexs[i + startPoint];
-			}
-
-			/* use filter to remove */
-			Remove remove = new Remove();
-			remove.setAttributeIndicesArray(indicesToRemove);
-			remove.setInputFormat(trainingDataSet);
-
-			modelDataSet = Filter.useFilter(trainingDataSet, remove);
-			Log.d(TAG,
-					"afterwards newdataSet.numAttributes():"
-							+ modelDataSet.numAttributes()
-							+ ",newdataSet.numInstances():"
-							+ modelDataSet.numInstances());
-			for (int i = 0; i < modelDataSet.numAttributes(); i++) {
-				Log.d(TAG, modelDataSet.attribute(i).name());
-			}
-
-			/* Build Classifier */
-			logistic.buildClassifier(modelDataSet);
-			Log.d(TAG, "SimpleLogistic:" + logistic.toString());
-			forest.buildClassifier(modelDataSet);
-			Log.d(TAG, "RandomForest:" + forest.toString());
-
-			saveModelClassifier();
-
-			Evaluation eval = new Evaluation(modelDataSet);
-			eval.evaluateModel(logistic, modelDataSet);
-			Log.d(TAG, "eval logistic:" + eval.toSummaryString());
-			eval.evaluateModel(forest, modelDataSet);
-			Log.d(TAG, "eval forest:" + eval.toSummaryString());
-
-			ret = true;
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return ret;
 	}
@@ -356,5 +357,50 @@ public class Model {
 		} else {
 			return null;
 		}
+	}
+
+	private boolean logWholeTrainingDataSet() {
+		if (trainingDataSet != null) {
+			String logFileAppendix = ".txt";
+			String logFilePath = Environment.getExternalStorageDirectory()
+					+ "/ShimmerTest/Logs";
+			String wholeLogFileName;
+			File wholeLogFile;
+			BufferedWriter wholeBuf;
+
+			wholeLogFileName = "Training_DataSet" + logFileAppendix;
+			wholeLogFile = new File(logFilePath, wholeLogFileName);
+
+			if (!wholeLogFile.exists()) {
+				try {
+					wholeLogFile.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			try {
+				wholeBuf = new BufferedWriter(
+						new FileWriter(wholeLogFile, true));
+
+				for (int i = 0; i < trainingDataSet.numInstances(); i++) {
+					double[] attrs = trainingDataSet.instance(i)
+							.toDoubleArray();
+					int numAttr = attrs.length;
+					String str = "";
+					for (int j = 0; j < numAttr; j++) {
+						str += String.valueOf(attrs[j]) + " , ";
+					}
+
+					wholeBuf.append(str.substring(0, str.length() - 5));
+					wholeBuf.newLine();
+				}
+
+				wholeBuf.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return true;
+		}
+		return false;
 	}
 }
