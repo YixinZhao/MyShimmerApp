@@ -15,6 +15,10 @@
     <string name="no_device_found">No Device Found</string>
     <string name="device_addr">Device address: </string>
     <string name="device_state">Device state: </string>
+    
+    <string name="users">Users</string>
+    <string name="new_user">New User</string>
+    
     <string name="stat_connecting">Connecting</string>
     <string name="stat_connected">Connected</string>
     <string name="stat_disconnected">Disconnected</string>
@@ -28,8 +32,9 @@
     <string name="button_stopstreaming">Stop Streaming</string>
     <string name="button_accl">accl</string>
     <string name="button_gyro">gyro</string>
-    <string name="button_startrecog">Start Recog</string>
+    <string name="button_startrecog">Start Recognition</string>
     <string name="button_starttraining">Start Traning</string>
+    <string name="button_users">Users</string>
     
     <string name="button_done">Done</string>
     <string name="button_cancel">Cancel</string>

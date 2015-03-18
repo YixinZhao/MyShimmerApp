@@ -51,46 +51,51 @@
     <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_weight="0.5"
         android:orientation="vertical" >
 
         <LinearLayout
             android:id="@+id/linearLayout4"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
             <Button
                 android:id="@+id/button_connection"
-                android:layout_width="117dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="50dp"
-                android:layout_marginRight="0dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="0dp"
                 android:text="@string/button_connect"
                 android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/button_settings"
-                android:layout_width="117dp"
+                android:layout_width="110dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="50dp"
                 android:layout_marginTop="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="0dp"
                 android:text="@string/button_settings"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/button_users"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="0dp"
+                android:text="@string/button_users"
                 android:textColor="@color/black" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearLayout5"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
             <Button
@@ -162,16 +167,15 @@
 
         <com.androidplot.xy.XYPlot
             android:id="@+id/dynamicPlot"
-            title="Shimmer Data Plot" 
             android:layout_width="fill_parent"
-            android:layout_height="match_parent"
+            android:layout_height="327dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
             androidPlot.legendWidget.heightMetric.value="25dp"
             androidPlot.legendWidget.textPaint.textSize="12dp"
             androidPlot.titleWidget.labelPaint.textSize="30dp"
-            />
+            title="Shimmer Data Plot" />
     </LinearLayout>
 
 </LinearLayout>
