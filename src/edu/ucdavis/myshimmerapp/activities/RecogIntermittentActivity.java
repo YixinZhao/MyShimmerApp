@@ -38,7 +38,7 @@ public class RecogIntermittentActivity extends RecogTrainActivityBase {
 		setContentView(R.layout.main_recog);
 		super.onCreate(savedInstanceState);
 
-		model = new Model(mlAlgo, gestureType, false);
+		model = new Model(mlAlgo, gestureType, false, userMode);
 		if (!model.isInitializedforValidation()) {
 			Log.d(TAG, "No Model File Exist! Exit Matching!");
 			finish();

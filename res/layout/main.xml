@@ -63,32 +63,20 @@
 
             <Button
                 android:id="@+id/button_connection"
-                android:layout_width="110dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginRight="0dp"
+                android:layout_marginTop="2dp"
                 android:text="@string/button_connect"
                 android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/button_settings"
-                android:layout_width="110dp"
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="0dp"
                 android:text="@string/button_settings"
-                android:textColor="@color/black" />
-
-            <Button
-                android:id="@+id/button_users"
-                android:layout_width="110dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="0dp"
-                android:text="@string/button_users"
                 android:textColor="@color/black" />
         </LinearLayout>
 
@@ -110,7 +98,7 @@
 
             <Button
                 android:id="@+id/button_recognition"
-                android:layout_width="120dp"
+                android:layout_width="125dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="5dp"

@@ -49,6 +49,9 @@ public class MainActivity extends MyServiceActivity {
 
 	public static final int ML_ALGORITHM_SIMPLE_LOGISTIC = 0;
 	public static final int ML_ALGORITHM_DECISION_TREE = 1;
+
+	public static final int USER_MODE_MAIN = 0;
+	public static final int USER_MODE_TEMP = 1;
 	// Local Bluetooth adapter
 	private BluetoothAdapter mBluetoothAdapter = null;
 	// Name of the connected device
@@ -67,6 +70,7 @@ public class MainActivity extends MyServiceActivity {
 	private static int gestureType = GESTURE_TYPE_FINGER;
 	private static int recogMode = RECOG_MODE_CONTINOUS;
 	private static int mlAlgo = ML_ALGORITHM_SIMPLE_LOGISTIC;
+	private static int userMode = USER_MODE_MAIN;
 	// private static int windows[] = new int[2];
 	private static double samplingRate = 0;
 
@@ -174,6 +178,10 @@ public class MainActivity extends MyServiceActivity {
 							gestureType);
 					serverIntent.putExtra(
 							SettingsActivity.Settings_Extra_ML_Algo, mlAlgo);
+					serverIntent
+					.putExtra(
+							SettingsActivity.Settings_Extra_User_Mode,
+							userMode);
 					startActivity(serverIntent);
 				}
 			}
@@ -198,6 +206,10 @@ public class MainActivity extends MyServiceActivity {
 							gestureType);
 					serverIntent.putExtra(
 							SettingsActivity.Settings_Extra_ML_Algo, mlAlgo);
+					serverIntent
+							.putExtra(
+									SettingsActivity.Settings_Extra_User_Mode,
+									userMode);
 					startActivity(serverIntent);
 				}
 			}
@@ -218,6 +230,10 @@ public class MainActivity extends MyServiceActivity {
 						SettingsActivity.Settings_Extra_Recog_Mode, recogMode);
 				serverIntent.putExtra(SettingsActivity.Settings_Extra_ML_Algo,
 						mlAlgo);
+				serverIntent
+				.putExtra(
+						SettingsActivity.Settings_Extra_User_Mode,
+						userMode);
 				// serverIntent.putExtra(
 				// SettingsActivity.Settings_Extra_Window_Sizes, windows);
 				startActivityForResult(serverIntent, REQUEST_SETTINGS);
@@ -268,9 +284,9 @@ public class MainActivity extends MyServiceActivity {
 				.setStrokeWidth(3);
 		dynamicPlot.getGraphWidget().getRangeOriginLinePaint()
 				.setStrokeWidth(3);
-		
-//		dynamicPlot.getLegendWidget().getTextPaint().setTextSize(12);
-//		dynamicPlot.getTitleWidget().getLabelPaint().setTextSize(16);
+
+		// dynamicPlot.getLegendWidget().getTextPaint().setTextSize(12);
+		// dynamicPlot.getTitleWidget().getLabelPaint().setTextSize(16);
 	}
 
 	public static Handler mActivityHandler = new Handler() {
@@ -462,11 +478,13 @@ public class MainActivity extends MyServiceActivity {
 						SettingsActivity.Settings_Extra_Recog_Mode);
 				String mlalgo = data.getExtras().getString(
 						SettingsActivity.Settings_Extra_ML_Algo);
+				String user = data.getExtras().getString(
+						SettingsActivity.Settings_Extra_User_Mode);
 				// String[] windowsStr = data.getExtras().getStringArray(
 				// SettingsActivity.Settings_Extra_Window_Sizes);
 
 				Log.d(TAG, "gestureType:" + gesture + ";" + "samplingRate:"
-						+ rate + "recogMode:" + recog);
+						+ rate + "recogMode:" + recog + ";" + "user:" + user);
 				if (samplingRate != Double.parseDouble(rate)) {
 					samplingRate = Double.parseDouble(rate);
 					mService.setShimmerSampleRate(samplingRate);
@@ -488,6 +506,11 @@ public class MainActivity extends MyServiceActivity {
 						break;
 				}
 				mlAlgo = i;
+				for (i = 0; i < SettingsActivity.user_modes.length; i++) {
+					if (user.equals(SettingsActivity.user_modes[i]))
+						break;
+				}
+				userMode = i;
 
 				// if (recogMode == RECOG_MODE_WINDOWED) {
 				// if (windowsStr != null) {

@@ -37,6 +37,7 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 	protected static double samplingRate = 0;
 	protected static int gestureType = 0;
 	protected static int mlAlgo = 0;
+	protected static int userMode = 0;
 
 	protected final static double maxRecordTime = 2.5;//
 	protected final static double minRecordTime = 1;// 1s
@@ -231,6 +232,15 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 		}
 		doBindService();
 
+		File logDir = new File(logFilePath);
+		if (!logDir.exists()) {
+			try {
+				logDir.mkdir();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		wholeLogFileName = "wholelog" + System.currentTimeMillis()
 				+ logFileAppendix;
 		wholeLogFile = new File(logFilePath, wholeLogFileName);
@@ -384,10 +394,17 @@ public abstract class RecogTrainActivityBase extends MyServiceActivity {
 			gestureType = extras
 					.getInt(SettingsActivity.Settings_Extra_Gesture_Type);
 			mlAlgo = extras.getInt(SettingsActivity.Settings_Extra_ML_Algo);
+			userMode = extras.getInt(SettingsActivity.Settings_Extra_User_Mode);
 		} else {
 			samplingRate = 128;
 			gestureType = MainActivity.GESTURE_TYPE_FINGER;
 			mlAlgo = MainActivity.ML_ALGORITHM_SIMPLE_LOGISTIC;
+			userMode = MainActivity.USER_MODE_MAIN;
+		}
+		if (userMode == MainActivity.USER_MODE_MAIN) {
+			this.setTitle("Main User");
+		} else {
+			this.setTitle("Guest User");
 		}
 		Log.d(TAG, samplingRate + "," + gestureType + "," + mlAlgo);
 	}

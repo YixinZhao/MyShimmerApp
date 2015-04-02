@@ -29,7 +29,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 		setContentView(R.layout.main_recog);
 		super.onCreate(savedInstanceState);
 
-		model = new Model(mlAlgo, gestureType, false);
+		model = new Model(mlAlgo, gestureType, false, userMode);
 		if (!model.isInitializedforValidation()) {
 			Log.d(TAG, "No Model File Exist! Exit Matching!");
 			finish();
@@ -94,7 +94,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 
 						if (++mWindowCounter >= mWindowSize) {
 							boolean isDetected = isWindowPositiveForSignal(mWindowData);
-//							Log.d(TAG, "isDetected:" + isDetected);
+							// Log.d(TAG, "isDetected:" + isDetected);
 
 							if (mIsRecording == false) {
 								if (isDetected) {
@@ -142,7 +142,7 @@ public class RecogContinousActivity extends RecogTrainActivityBase {
 										resultText
 												.setText(GestureNames.types[gestureType][type]);
 									}
-									
+
 									logWindow(toMatchData);
 								}
 								// } else {

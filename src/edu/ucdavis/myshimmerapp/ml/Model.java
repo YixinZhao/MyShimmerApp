@@ -42,16 +42,19 @@ public class Model {
 
 	private int ml_algorithm = MainActivity.ML_ALGORITHM_SIMPLE_LOGISTIC;
 	private int gesture_type = MainActivity.GESTURE_TYPE_FINGER;
+	private int user_mode = MainActivity.USER_MODE_MAIN;
 
 	String[] classifierFileNames_l = { "finger__l.model", "hand__l.model",
 			"writings__l.model" };
 	String[] classifierFileNames_t = { "finger__t.model", "hand__t.model",
 			"writings__t.model" };
 	String[] datasetFileNames = { "finger.data", "hand.data", "writings.data" };
-	String logFilePath = Environment.getExternalStorageDirectory()
-			+ "/ShimmerTest/Models/";
+	String logFilePathMain = Environment.getExternalStorageDirectory()
+			+ "/ShimmerTest/MainModels/";
+	String logFilePathTemp = Environment.getExternalStorageDirectory()
+			+ "/ShimmerTest/TempModels/";
 
-	public Model(int mlType, int gestureType, boolean isTraining) {
+	public Model(int mlType, int gestureType, boolean isTraining, int userMode) {
 		if (mlType >= MainActivity.ML_ALGORITHM_SIMPLE_LOGISTIC
 				&& mlType <= MainActivity.ML_ALGORITHM_DECISION_TREE) {
 			ml_algorithm = mlType;
@@ -60,6 +63,11 @@ public class Model {
 		if (gestureType >= MainActivity.GESTURE_TYPE_FINGER
 				&& gestureType <= MainActivity.GESTURE_TYPE_ARM) {
 			gesture_type = gestureType;
+		}
+
+		if (userMode >= MainActivity.USER_MODE_MAIN
+				&& gestureType <= MainActivity.USER_MODE_TEMP) {
+			user_mode = userMode;
 		}
 
 		if (isTraining) {
@@ -270,28 +278,64 @@ public class Model {
 
 	private void saveModelClassifier() {
 		if (modelDataSet != null && logistic != null && forest != null) {
+			Log.d(TAG, "save model:" + user_mode);
 			try {
-				/* save model data */
-				if (SerializationHelper.isSerializable(modelDataSet.getClass())) {
-					File outFile = new File(logFilePath,
-							datasetFileNames[gesture_type]);
-					SerializationHelper.write(new FileOutputStream(outFile),
-							modelDataSet);
-				}
+				if (user_mode == MainActivity.USER_MODE_MAIN) {
+					File dir = new File(logFilePathMain);
+					if (!dir.exists()) {
+						dir.mkdir();
+					}
+					/* save model data */
+					if (SerializationHelper.isSerializable(modelDataSet
+							.getClass())) {
+						File outFile = new File(logFilePathMain,
+								datasetFileNames[gesture_type]);
+						SerializationHelper.write(
+								new FileOutputStream(outFile), modelDataSet);
+					}
 
-				/* save classifier */
-				if (SerializationHelper.isSerializable(logistic.getClass())) {
-					File outFile = new File(logFilePath,
-							classifierFileNames_l[gesture_type]);
-					SerializationHelper.write(new FileOutputStream(outFile),
-							logistic);
-				}
+					/* save classifier */
+					if (SerializationHelper.isSerializable(logistic.getClass())) {
+						File outFile = new File(logFilePathMain,
+								classifierFileNames_l[gesture_type]);
+						SerializationHelper.write(
+								new FileOutputStream(outFile), logistic);
+					}
 
-				if (SerializationHelper.isSerializable(forest.getClass())) {
-					File outFile = new File(logFilePath,
-							classifierFileNames_t[gesture_type]);
-					SerializationHelper.write(new FileOutputStream(outFile),
-							forest);
+					if (SerializationHelper.isSerializable(forest.getClass())) {
+						File outFile = new File(logFilePathMain,
+								classifierFileNames_t[gesture_type]);
+						SerializationHelper.write(
+								new FileOutputStream(outFile), forest);
+					}
+				} else {
+					File dir = new File(logFilePathTemp);
+					if (!dir.exists()) {
+						dir.mkdir();
+					}
+					/* save model data */
+					if (SerializationHelper.isSerializable(modelDataSet
+							.getClass())) {
+						File outFile = new File(logFilePathTemp,
+								datasetFileNames[gesture_type]);
+						SerializationHelper.write(
+								new FileOutputStream(outFile), modelDataSet);
+					}
+
+					/* save classifier */
+					if (SerializationHelper.isSerializable(logistic.getClass())) {
+						File outFile = new File(logFilePathTemp,
+								classifierFileNames_l[gesture_type]);
+						SerializationHelper.write(
+								new FileOutputStream(outFile), logistic);
+					}
+
+					if (SerializationHelper.isSerializable(forest.getClass())) {
+						File outFile = new File(logFilePathTemp,
+								classifierFileNames_t[gesture_type]);
+						SerializationHelper.write(
+								new FileOutputStream(outFile), forest);
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -301,39 +345,73 @@ public class Model {
 
 	private boolean loadModelClassifier() {
 		boolean ret = false;
-		Log.d(TAG, "loadModelClassifier");
+		Log.d(TAG, "load model:" + user_mode);
 		try {
-			/* load classifier */
-			File inFile_classifier = null;
-			if (ml_algorithm == MainActivity.ML_ALGORITHM_SIMPLE_LOGISTIC) {
-				inFile_classifier = new File(logFilePath,
-						classifierFileNames_l[gesture_type]);
+			if (user_mode == MainActivity.USER_MODE_MAIN) {
+				/* load classifier */
+				File inFile_classifier = null;
+				if (ml_algorithm == MainActivity.ML_ALGORITHM_SIMPLE_LOGISTIC) {
+					inFile_classifier = new File(logFilePathMain,
+							classifierFileNames_l[gesture_type]);
+				} else {
+					inFile_classifier = new File(logFilePathMain,
+							classifierFileNames_t[gesture_type]);
+				}
+				Log.d(TAG, "inFile_classifier:" + inFile_classifier.getName());
+				classifier = (Classifier) SerializationHelper
+						.read(new FileInputStream(inFile_classifier));
+
+				/* load model data */
+				File inFile_2 = new File(logFilePathMain,
+						datasetFileNames[gesture_type]);
+				modelDataSet = (Instances) SerializationHelper
+						.read(new FileInputStream(inFile_2));
+				Log.d(TAG, "inFile_2:" + inFile_2.getName());
+
+				Log.d(TAG, "Validation Model Initialized");
+				Log.d(TAG, "classifier:" + classifier.toString());
+				Log.d(TAG, "modelDataSet:" + modelDataSet.numAttributes() + ","
+						+ modelDataSet.numInstances());
+
+				// for (int i = 0; i < modelDataSet.numAttributes(); i++) {
+				// Log.d(TAG, modelDataSet.attribute(i).name());
+				// }
+
+				isInitializedforValication = true;
+				ret = true;
 			} else {
-				inFile_classifier = new File(logFilePath,
-						classifierFileNames_t[gesture_type]);
+				/* load classifier */
+				File inFile_classifier = null;
+				if (ml_algorithm == MainActivity.ML_ALGORITHM_SIMPLE_LOGISTIC) {
+					inFile_classifier = new File(logFilePathTemp,
+							classifierFileNames_l[gesture_type]);
+				} else {
+					inFile_classifier = new File(logFilePathTemp,
+							classifierFileNames_t[gesture_type]);
+				}
+				Log.d(TAG, "inFile_classifier:" + inFile_classifier.getName());
+				classifier = (Classifier) SerializationHelper
+						.read(new FileInputStream(inFile_classifier));
+
+				/* load model data */
+				File inFile_2 = new File(logFilePathTemp,
+						datasetFileNames[gesture_type]);
+				modelDataSet = (Instances) SerializationHelper
+						.read(new FileInputStream(inFile_2));
+				Log.d(TAG, "inFile_2:" + inFile_2.getName());
+
+				Log.d(TAG, "Validation Model Initialized");
+				Log.d(TAG, "classifier:" + classifier.toString());
+				Log.d(TAG, "modelDataSet:" + modelDataSet.numAttributes() + ","
+						+ modelDataSet.numInstances());
+
+				// for (int i = 0; i < modelDataSet.numAttributes(); i++) {
+				// Log.d(TAG, modelDataSet.attribute(i).name());
+				// }
+
+				isInitializedforValication = true;
+				ret = true;
 			}
-			Log.d(TAG, "inFile_classifier:" + inFile_classifier.getName());
-			classifier = (Classifier) SerializationHelper
-					.read(new FileInputStream(inFile_classifier));
-
-			/* load model data */
-			File inFile_2 = new File(logFilePath,
-					datasetFileNames[gesture_type]);
-			modelDataSet = (Instances) SerializationHelper
-					.read(new FileInputStream(inFile_2));
-			Log.d(TAG, "inFile_2:" + inFile_2.getName());
-
-			Log.d(TAG, "Validation Model Initialized");
-			Log.d(TAG, "classifier:" + classifier.toString());
-			Log.d(TAG, "modelDataSet:" + modelDataSet.numAttributes() + ","
-					+ modelDataSet.numInstances());
-
-			// for (int i = 0; i < modelDataSet.numAttributes(); i++) {
-			// Log.d(TAG, modelDataSet.attribute(i).name());
-			// }
-
-			isInitializedforValication = true;
-			ret = true;
 		} catch (Exception e) {
 
 			e.printStackTrace();

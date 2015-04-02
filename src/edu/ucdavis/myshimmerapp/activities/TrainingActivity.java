@@ -39,7 +39,8 @@ public class TrainingActivity extends RecogTrainActivityBase {
 		setContentView(R.layout.main_train);
 		super.onCreate(savedInstanceState);
 
-		model = new Model(mlAlgo, gestureType, true);
+		model = new Model(mlAlgo, gestureType, true, userMode);
+
 
 		startButton = (Button) findViewById(R.id.button_start);
 		startButton.setOnClickListener(new OnClickListener() {

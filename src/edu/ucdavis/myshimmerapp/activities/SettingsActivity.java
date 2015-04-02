@@ -22,6 +22,7 @@ public class SettingsActivity extends MyServiceActivity {
 	public static final String Settings_Extra_Sampling_Rate = "Settings_SamplingRate";
 	public static final String Settings_Extra_ML_Algo = "Settings_MLAlgorithm";
 	public static final String Settings_Extra_Recog_Mode = "Settings_RecogMode";
+	public static final String Settings_Extra_User_Mode = "Settings_UserMode";
 	// public static final String Settings_Extra_Window_Sizes = "WindowSizes";
 
 	public static final String[] sampling_rates = { "8", "16", "51.2", "102.4",
@@ -30,13 +31,15 @@ public class SettingsActivity extends MyServiceActivity {
 	public static final String[] ml_algos = { "Simple Logistic",
 			"Decision Tree" };
 	public static final String[] recog_modes = { "Windowed", "Continous" };
+	public static final String[] user_modes = { "Main User", "Guest User" };
 
 	private Button doneButton;
 	private Button cancelButton;
 	private RadioGroup samplingGroup;
 	private RadioGroup gestureGroup;
 	private RadioGroup mlalgoGroup;
-	private RadioGroup recogGroup;
+	private RadioGroup userGroup;
+	// private RadioGroup recogGroup;
 
 	// private LinearLayout textLayout;
 	// private EditText big_Win_Size_Text;
@@ -46,6 +49,7 @@ public class SettingsActivity extends MyServiceActivity {
 	String rate;
 	String recog;
 	String mlalgo;
+	String user;
 
 	// int[] windows = new int[2];
 
@@ -68,6 +72,7 @@ public class SettingsActivity extends MyServiceActivity {
 				intent.putExtra(Settings_Extra_Gesture_Type, gesture);
 				intent.putExtra(Settings_Extra_Recog_Mode, recog);
 				intent.putExtra(Settings_Extra_ML_Algo, mlalgo);
+				intent.putExtra(Settings_Extra_User_Mode, user);
 				// if (recog.equals(recog_modes[0])) {
 				// if (big_Win_Size_Text.getText() != null)
 				// windows[0] = Integer.parseInt(big_Win_Size_Text
@@ -92,7 +97,8 @@ public class SettingsActivity extends MyServiceActivity {
 		samplingGroup = (RadioGroup) findViewById(R.id.sample_rate_group);
 		gestureGroup = (RadioGroup) findViewById(R.id.gesture_type_group);
 		mlalgoGroup = (RadioGroup) findViewById(R.id.ml_algo_group);
-		recogGroup = (RadioGroup) findViewById(R.id.recog_mode_group);
+		userGroup = (RadioGroup) findViewById(R.id.user_group);
+		// recogGroup = (RadioGroup) findViewById(R.id.recog_mode_group);
 
 		// set initial value
 		String currentRate = String.valueOf(mService.getShimmerSampleRate());
@@ -112,8 +118,10 @@ public class SettingsActivity extends MyServiceActivity {
 			gesture = gesture_types[extras.getInt(Settings_Extra_Gesture_Type)];
 			recog = recog_modes[extras.getInt(Settings_Extra_Recog_Mode)];
 			mlalgo = ml_algos[extras.getInt(Settings_Extra_ML_Algo)];
+			user = user_modes[extras.getInt(Settings_Extra_User_Mode)];
 			// windows = extras.getIntArray(Settings_Extra_Window_Sizes);
 		}
+
 		for (String str : gesture_types) {
 			RadioButton radio = new RadioButton(this);
 			radio.setText(str);
@@ -127,7 +135,7 @@ public class SettingsActivity extends MyServiceActivity {
 			RadioButton radio = new RadioButton(this);
 			radio.setText(str);
 
-			recogGroup.addView(radio);
+			// recogGroup.addView(radio);
 			if (recog != null && recog.equals(str)) {
 				radio.setChecked(true);
 			}
@@ -141,11 +149,21 @@ public class SettingsActivity extends MyServiceActivity {
 				radio.setChecked(true);
 			}
 		}
+		for (String str : user_modes) {
+			RadioButton radio = new RadioButton(this);
+			radio.setText(str);
+
+			userGroup.addView(radio);
+			if (user != null && user.equals(str)) {
+				radio.setChecked(true);
+			}
+		}
 
 		samplingGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
 		gestureGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
-		recogGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
+		// recogGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
 		mlalgoGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
+		userGroup.setOnCheckedChangeListener(mCheckedChangeListener1);
 		// textLayout = (LinearLayout) findViewById(R.id.Recog_mode_text);
 		// textLayout.setVisibility(View.GONE);
 
@@ -178,12 +196,17 @@ public class SettingsActivity extends MyServiceActivity {
 				} else if (group == gestureGroup) {
 					gesture = rb.getText().toString();
 					Log.d(TAG, gesture);
-				} else if (group == recogGroup) {
-					recog = rb.getText().toString();
-					Log.d(TAG, recog);
-				} else if (group == mlalgoGroup) {
+				}
+				// else if (group == recogGroup) {
+				// recog = rb.getText().toString();
+				// Log.d(TAG, recog);
+				// }
+				else if (group == mlalgoGroup) {
 					mlalgo = rb.getText().toString();
 					Log.d(TAG, mlalgo);
+				} else if (group == userGroup) {
+					user = rb.getText().toString();
+					Log.d(TAG, user);
 				}
 			}
 		}

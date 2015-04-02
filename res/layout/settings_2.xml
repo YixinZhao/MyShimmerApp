@@ -93,7 +93,39 @@
                 android:layout_height="wrap_content" />
         </ScrollView>
     </LinearLayout>
+    
+        <LinearLayout
+        android:id="@+id/User"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:orientation="vertical" >
 
+        <TextView
+            android:id="@+id/title_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/shimmer_grey"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/users"
+            android:textColor="#fff" />
+
+        <ScrollView
+            android:id="@+id/scrollview_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true" >
+
+            <RadioGroup
+                android:id="@+id/user_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+    </LinearLayout>
+    
+    
+    <!--
     <LinearLayout
         android:id="@+id/Recog_Mode"
         android:layout_width="match_parent"
@@ -123,7 +155,7 @@
                 android:layout_height="wrap_content" />
         </ScrollView>
 
-        <!--
+
              <EditText
             android:id="@+id/big_window_size"
             android:layout_width="match_parent"
@@ -144,8 +176,8 @@
             android:lines="1"
             android:maxLines="1"
             android:minLines="1" >
-        </EditText>        -->
-    </LinearLayout>
+        </EditText>       
+    </LinearLayout>    -->
 
     <LinearLayout
         android:id="@+id/layoutButton"
